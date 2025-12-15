@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Jogue, descubra e transforme respostas em ajuda para cães">
+  <title>UAU AVALIADOR - Ajude cães brincando</title>
+  <style>
+    /* ========================================
+       ESTILOS GERAIS
+       ======================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+      color: #333;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding-bottom: 2rem;
+    }
+
+    /* ========================================
+       HEADER / TOPO
+       ======================================== */
+    header {
+      text-align: center;
+      padding: 2rem 1rem 1.5rem;
+      background: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .logo {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #2e7d32;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #666;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    /* ========================================
+       CONTAINER PRINCIPAL
+       ======================================== */
+    .container {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    /* ========================================
+       MINI-JOGO
+       ======================================== */
+    .game-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .value-display {
+      text-align: center;
+      background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+      color: white;
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .value-note {
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+      opacity: 0.9;
+    }
+
+    .dog-image-container {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .dog-image {
+      width: 100%;
+      max-width: 300px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .question {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #2e7d32;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .answers {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .answer-btn {
+      background: white;
+      border: 2px solid #ff9800;
+      color: #333;
+      padding: 1rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-height: 48px;
+    }
+
+    .answer-btn:hover {
+      background: #ff9800;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255,152,0,0.4);
+    }
+
+    .answer-btn:active {
+      transform: translateY(0);
+    }
+
+    .feedback {
+      text-align: center;
+      font-size: 1.25rem;
+      color: #2e7d32;
+      margin-top: 1rem;
+      font-weight: 600;
+      animation: fadeIn 0.5s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ========================================
+       FINAL DO JOGO / CTA
+       ======================================== */
+    .game-end {
+      text-align: center;
+      display: none;
+    }
+
+    .game-end.active {
+      display: block;
+      animation: fadeIn 0.5s;
+    }
+
+    .final-value {
+      font-size: 2rem;
+      color: #2e7d32;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .final-message {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 2rem;
+    }
+
+    .cta-btn {
+      background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+      color: white;
+      border: none;
+      padding: 1.25rem 2rem;
+      border-radius: 12px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      min-height: 56px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255,152,0,0.4);
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(255,152,0,0.5);
+    }
+
+    .cta-note {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 1rem;
+      font-style: italic;
+    }
+
+    /* ========================================
+       SEÇÃO RIFA
+       ======================================== */
+    .raffle-section {
+      margin-top: 3rem;
+    }
+
+    .raffle-transition {
+      text-align: center;
+      font-size: 1.25rem;
+      color: #2e7d32;
+      margin-bottom: 2rem;
+      font-weight: 600;
+    }
+
+    .raffle-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .raffle-title {
+      font-size: 1.5rem;
+      color: #2e7d32;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+    }
+
+    .raffle-packages {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    @media (min-width: 500px) {
+      .raffle-packages {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .raffle-btn {
+      background: white;
+      border: 3px solid #43a047;
+      color: #2e7d32;
+      padding: 1.25rem 1rem;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+      min-height: 48px;
+    }
+
+    .raffle-btn:hover {
+      background: #43a047;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(67,160,71,0.4);
+    }
+
+    .raffle-price {
+      font-size: 1.5rem;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .raffle-tickets {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    /* ========================================
+       LOADING / HIDDEN STATES
+       ======================================== */
+    .hidden {
+      display: none !important;
+    }
+
+    /* ========================================
+       RESPONSIVIDADE
+       ======================================== */
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .subtitle {
+        font-size: 0.9rem;
+      }
+
+      .question {
+        font-size: 1.1rem;
+      }
+
+      .dog-image {
+        height: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================
+       HEADER
+       ======================================== -->
+  <header>
+    <div class="logo">🐕‍🦺</div>
+    <h1>UAU AVALIADOR</h1>
+    <p class="subtitle">Jogue, descubra e transforme respostas em ajuda para cães</p>
+  </header>
+
+  <!-- ========================================
+       CONTAINER PRINCIPAL
+       ======================================== -->
+  <div class="container">
+    
+    <!-- MINI-JOGO -->
+    <div class="game-card">
+      
+      <!-- Display do valor acumulado -->
+      <div class="value-display">
+        <div id="currentValue">R$ 30 em ajuda aos cães 🐶</div>
+        <div class="value-note">Valor simbólico de impacto social</div>
+      </div>
+
+      <!-- Área do jogo -->
+      <div id="gameArea">
+        <div class="dog-image-container">
+          <img id="dogImage" class="dog-image" src="/placeholder.svg" alt="Cachorro adorável">
+        </div>
+        
+        <div id="questionText" class="question"></div>
+        
+        <div id="answersArea" class="answers"></div>
+        
+        <div id="feedbackArea" class="feedback"></div>
+      </div>
+
+      <!-- Final do jogo (oculto inicialmente) -->
+      <div id="gameEnd" class="game-end">
+        <div class="final-value" id="finalValue"></div>
+        <div class="final-message">para cães resgatados 🐾</div>
+        
+        <button class="cta-btn" onclick="handleCTA()">
+          Ativar acesso completo ao Uau Avaliador — R$19,90
+        </button>
+        
+        <p class="cta-note">
+          O valor ajuda a manter o projeto e apoiar cães em situação crítica.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- ========================================
+         SEÇÃO RIFA SOLIDÁRIA
+         ======================================== -->
+    <div class="raffle-section">
+      <div class="raffle-transition">
+        Prefere ajudar de outra forma? Participe da rifa solidária abaixo 🐕
+      </div>
+
+      <div class="raffle-card">
+        <h2 class="raffle-title">Rifa Solidária</h2>
+        
+        <div class="raffle-packages">
+          <!-- EDITE OS LINKS ABAIXO PARA APONTAR PARA SEU CHECKOUT -->
+          <a href="#" class="raffle-btn">
+            <span class="raffle-price">R$ 10</span>
+            <span class="raffle-tickets">1 número</span>
+          </a>
+          
+          <a href="#" class="raffle-btn">
+            <span class="raffle-price">R$ 25</span>
+            <span class="raffle-tickets">3 números</span>
+          </a>
+          
+          <a href="#" class="raffle-btn">
+            <span class="raffle-price">R$ 50</span>
+            <span class="raffle-tickets">7 números</span>
+          </a>
+          
+          <a href="#" class="raffle-btn">
+            <span class="raffle-price">R$ 100</span>
+            <span class="raffle-tickets">15 números</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========================================
+       JAVASCRIPT DO JOGO
+       ======================================== -->
+  <script>
+    // ========================================
+    // CONFIGURAÇÃO DO JOGO
+    // EDITE AQUI PARA MUDAR PERGUNTAS, IMAGENS E VALORES
+    // ========================================
+    
+    const gameData = [
+      {
+        // RODADA 1 - Raça
+        // EDITE o src da imagem aqui (pode usar link externo ou caminho local)
+        image: '/placeholder.svg?height=300&width=300',
+        question: 'Que raça você acha que é esse cachorro?',
+        answers: [
+          { text: 'Golden Retriever', value: 15 },
+          { text: 'Labrador', value: 10 },
+          { text: 'Vira-lata Caramelo', value: 20 },
+          { text: 'Pastor Alemão', value: 12 }
+        ]
+      },
+      {
+        // RODADA 2 - Nome
+        image: '/placeholder.svg?height=300&width=300',
+        question: 'Qual seria o nome perfeito para ele?',
+        answers: [
+          { text: 'Thor', value: 10 },
+          { text: 'Mel', value: 15 },
+          { text: 'Bob', value: 8 }
+        ]
+      },
+      {
+        // RODADA 3 - Idade
+        image: '/placeholder.svg?height=300&width=300',
+        question: 'Que idade você acha que ele tem?',
+        answers: [
+          { text: 'Filhote (0-1 ano)', value: 12 },
+          { text: 'Adulto (2-7 anos)', value: 18 },
+          { text: 'Idoso (8+ anos)', value: 25 },
+          { text: 'Difícil dizer!', value: 10 }
+        ]
+      },
+      {
+        // RODADA 4 - Felicidade
+        image: '/placeholder.svg?height=300&width=300',
+        question: 'Onde esse cachorro seria mais feliz?',
+        answers: [
+          { text: 'Casa com quintal', value: 20 },
+          { text: 'Apartamento aconchegante', value: 15 },
+          { text: 'Fazenda no campo', value: 18 }
+        ]
+      },
+      {
+        // RODADA 5 - Qualidade
+        image: '/placeholder.svg?height=300&width=300',
+        question: 'Qual qualidade mais combina com ele?',
+        answers: [
+          { text: 'Leal', value: 20 },
+          { text: 'Brincalhão', value: 15 },
+          { text: 'Corajoso', value: 18 },
+          { text: 'Carinhoso', value: 22 }
+        ]
+      }
+    ];
+
+    // ========================================
+    // VARIÁVEIS DO JOGO
+    // ========================================
+    let currentRound = 0;
+    let totalValue = 30; // Valor inicial
+
+    // ========================================
+    // INICIAR JOGO
+    // ========================================
+    function startGame() {
+      loadRound(currentRound);
+    }
+
+    // ========================================
+    // CARREGAR RODADA
+    // ========================================
+    function loadRound(roundIndex) {
+      const round = gameData[roundIndex];
+      
+      // Atualizar imagem
+      document.getElementById('dogImage').src = round.image;
+      
+      // Atualizar pergunta
+      document.getElementById('questionText').textContent = round.question;
+      
+      // Limpar feedback
+      document.getElementById('feedbackArea').textContent = '';
+      
+      // Criar botões de resposta
+      const answersArea = document.getElementById('answersArea');
+      answersArea.innerHTML = '';
+      
+      round.answers.forEach(answer => {
+        const btn = document.createElement('button');
+        btn.className = 'answer-btn';
+        btn.textContent = answer.text;
+        btn.onclick = () => handleAnswer(answer.value);
+        answersArea.appendChild(btn);
+      });
+    }
+
+    // ========================================
+    // LIDAR COM RESPOSTA
+    // ========================================
+    function handleAnswer(value) {
+      // Atualizar valor total
+      totalValue += value;
+      
+      // Garantir que o valor nunca seja menor que 10
+      if (totalValue < 10) {
+        totalValue = 10;
+      }
+      
+      // Atualizar display do valor
+      document.getElementById('currentValue').textContent = 
+        `R$ ${totalValue} em ajuda aos cães 🐶`;
+      
+      // Mostrar feedback positivo
+      const feedbacks = [
+        'Boa tentativa 🐾',
+        'Muito bem! 🐕',
+        'Excelente escolha! ⭐',
+        'Você tem um coração bondoso! 💚',
+        'Que legal! 🎉'
+      ];
+      const randomFeedback = feedbacks[Math.floor(Math.random() * feedbacks.length)];
+      document.getElementById('feedbackArea').textContent = randomFeedback;
+      
+      // Desabilitar todos os botões
+      const buttons = document.querySelectorAll('.answer-btn');
+      buttons.forEach(btn => btn.disabled = true);
+      
+      // Avançar para próxima rodada após 1.5 segundos
+      setTimeout(() => {
+        currentRound++;
+        
+        if (currentRound < gameData.length) {
+          loadRound(currentRound);
+        } else {
+          endGame();
+        }
+      }, 1500);
+    }
+
+    // ========================================
+    // FINALIZAR JOGO
+    // ========================================
+    function endGame() {
+      // Esconder área do jogo
+      document.getElementById('gameArea').classList.add('hidden');
+      
+      // Mostrar tela final
+      const gameEnd = document.getElementById('gameEnd');
+      gameEnd.classList.add('active');
+      
+      // Atualizar valor final
+      document.getElementById('finalValue').textContent = 
+        `Você acumulou R$ ${totalValue} em impacto`;
+    }
+
+    // ========================================
+    // LIDAR COM CTA (Chamada para Ação)
+    // EDITE O LINK ABAIXO PARA SEU CHECKOUT
+    // ========================================
+    function handleCTA() {
+      // COLOQUE AQUI O LINK DO SEU CHECKOUT/PÁGINA DE PAGAMENTO
+      window.location.href = '#checkout';
+      
+      // OU abra em nova aba:
+      // window.open('https://seu-link-de-checkout.com', '_blank');
+    }
+
+    // ========================================
+    // INICIAR O JOGO QUANDO A PÁGINA CARREGAR
+    // ========================================
+    window.addEventListener('DOMContentLoaded', startGame);
+  </script>
+
+</body>
+</html>
